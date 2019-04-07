@@ -4,21 +4,23 @@ requirejs(["ctyoscape.js", "jquery"], function(cytoscape, $) {
     //util's dependencies have loaded, and the util argument will hold
     //the module value for "helper/util".
 var elelist = []
+var eleNames = []
 var coins = ['ADA', 'BTC', 'DASH', 'EOS', 'ETH', 'LTC', 'TRX', 'XLM', 'XMR', 'XRP']
 var exchanges = ['Binance', 'BitMEX', 'Bitfinex', 'Bithumb', 'Coinbase', 'Deribit', 'Huobi', 'Kraken', 'Kucoin', 'Liquid']
-// for (x=0;x<coins.length;x++) {
-//   for(i=0;i<exchanges.length;i++)
-//   {
-//     elelist.push({
-//       data: { id: `${coins[x]}/${exchanges[i]}`, centerNode: 0 }
-//     })
-//   }
-// }
-for (x=0;x<100;x++) {
+for (x=0;x<exchanges.length;x++) {
+  for(i=0;i<coins.length;i++)
+  {
     elelist.push({
-      data: { id: x, centerNode: 0 }
+      data: { id: `${exchanges[x]}_${coins[i]}`, centerNode: 0 }
     })
+    eleNames.push(`${exchanges[x]}_${coins[i]}`)
+  }
 }
+// for (x=0;x<100;x++) {
+//     elelist.push({
+//       data: { id: x, centerNode: 0 }
+//     })
+// }
 // edgelist = []
 // for(x=0;x<100;x++) {
 //   for(i=0;i<100;i++) {
@@ -120,7 +122,7 @@ style: [ // the stylesheet for the graph
   {
     selector: 'edge',
     style: {
-      'width': 3,
+      'width': 1,
       'line-color': '#ccc',
       'target-arrow-color': '#ccc',
       'curve-style': 'straight',
@@ -136,14 +138,15 @@ style: [ // the stylesheet for the graph
     'target-arrow-color': '#6AF007',
     'z-index': 4,
     'opacity': 1,
-    'width': 6,
+    'width': 4,
+    'curve-style': 'straight',
   }
 },
 {
   selector: '.activeNode',
   style: {
-    'width': 80,
-    'height': 80,
+    'width': 40,
+    'height': 40,
   }
 },
 
@@ -209,48 +212,67 @@ let options = {
 let smallCircleOptions =
 {
   name: 'circle',
-  radius: 200,
-  sort: function(a, b){ return a.data('id') - b.data('id') },
+  radius: 400,
+  sort: function(a, b){ return a.data('order') - b.data('order') },
   animate: true, // whether to transition the node positions
   animationDuration: 600, // duration of animation in ms if enabled
 }
 
-function makeLink() {
+document.getElementById("generateButton").addEventListener("click", loadAPI);
+
+function loadAPI() {
+  return $.ajax({
+    url: "https://cyclefinder-api-heroku.herokuapp.com/cycle",
+    success: function(data) {
+        var nodeList = [];
+        var list = JSON.parse(data)
+        for(x=0;x<list.length;x++) {
+          list[x] = list[x].replace('/','_')
+          cy.$(`#${list[x]}`).data('order', x)
+        }
+        console.log()
+        makeLink(list);
+      }
+  })
+}
+
+function makeLink(activeNodes) {
   cy.remove(cy.$('edge'))
   cy.$('[centerNode = 1]').removeClass('activeNode');
   cy.$('[centerNode = 1]').data('centerNode', 0)
   // cy.$('[activeEdge = 1]').removeClass('positivelink');
   // cy.$('[activeEdge = 1]').data('activeEdge', 0)
-  var lastTarget = Math.floor(Math.random()*100)
-  var firstTarget = lastTarget
-  var elements = cy.$(('#'+lastTarget))
-  var chosenNodes = [lastTarget]
-  var newLinks = []
-  for( x = 0; x < 5; x++) {
-    newTarget = Math.floor(Math.random()*100)
-    chosenNodes.push(newTarget)
-    // cy.$('#edge'+lastTarget.toString()+newTarget.toString()).data('activeEdge',1)
-    // cy.add({group:'edges', data: {id: ('edge'+lastTarget.toString()+newTarget.toString()), activeEdge: 1, source: lastTarget, target: newTarget}})
-    elements = elements.union(('#'+newTarget))
-    lastTarget = newTarget
-  }
+  var elements = cy.$(`#${activeNodes[0]}`)
   var edgeList = []
-  for(i=0;i<chosenNodes.length;i++) {
-    for(x=0;x<100;x++) {
-      edgeName = 'edge'+chosenNodes[i].toString()+'_'+x.toString()
-      if(x != chosenNodes[i] && ! edgeList.includes(edgeName)) {
+  for( x = 0; x < activeNodes.length; x++) {
+    for(i=0;i<activeNodes.length;i++) {
+      edgeName = activeNodes[x]+'_'+activeNodes[i]
+      if(x != i && ! edgeList.includes(edgeName)) {
+        cy.add({group:'edges', data: {id: edgeName, activeEdge: 0, source: activeNodes[x], target: activeNodes[i]}})
+        elements = elements.union((`#${activeNodes[x]}`))
         edgeList.push(edgeName)
-        cy.add({group:'edges', data: {id: edgeName, activeEdge: 0, source: chosenNodes[i], target: x}})
       }
     }
   }
-  for(i=0;i<chosenNodes.length-1;i++) {
-    cy.$('#edge'+chosenNodes[i].toString()+'_'+chosenNodes[i+1].toString()).data('activeEdge',1)
+  // var edgeList = []
+  // for(i=0;i<activeNodes.length;i++) {
+  //   for(x=0;x<elelist.length;x++) {
+  //     edgeName = activeNodes[i]+'_'+eleNames[x]
+  //     if(eleNames[x] != activeNodes[i] && ! edgeList.includes(edgeName)) {
+  //       edgeList.push(edgeName)
+  //       console.log(edgeName)
+  //       cy.add({group:'edges', data: {id: edgeName, activeEdge: 0, source: activeNodes[i], target: eleNames[x]}})
+  //     }
+  //   }
+  // }
+  for(i=0;i<activeNodes.length-1;i++) {
+    cy.$('#'+activeNodes[i]+'_'+activeNodes[i+1]).data('activeEdge',1)
   }
-  cy.$('#edge'+chosenNodes[chosenNodes.length-1].toString()+'_'+chosenNodes[0].toString()).data('activeEdge',1)
+  // cy.$('#'+activeNodes[activeNodes.length-1]+'_'+activeNodes[0]).data('activeEdge',1)
   // cy.add({group:'edges', data: {id: ('edge'+lastTarget.toString()+firstTarget.toString()), activeEdge: 1, source: lastTarget, target: firstTarget}})
   // cy.$('#edge'+lastTarget.toString()+firstTarget.toString()).data('activeEdge',1)
   // cy.add(newLinks)
+  console.log(activeNodes.length)
   elements.data('centerNode', 1)
   let lout = cy.$('[centerNode = 0]').union('[activeEdge = 0]').layout( options );
   lout.run()
@@ -259,8 +281,9 @@ function makeLink() {
   cy.$('[activeEdge = 1]').addClass('positivelink');
   cy.$('[centerNode = 1]').addClass('activeNode');
 }
-makeLink()
-setInterval(makeLink, 5000);
+loadAPI()
+// makeLink()
+//setInterval(loadAPI, 5000);
 var coinSymbols = ['BTC','ETH', 'XRP', 'XLM', 'EOS', 'LTC', 'ADA', 'XMR', 'DASH', 'TRX']
 var apiData = []
 var priceMap = {}

@@ -80,6 +80,7 @@ style: [ // the stylesheet for the graph
         },
       'label': 'data(id)',
       'text-valign' : 'center',
+      /*
       'shape': function( ele ){
         var nodeid = ele.data('id').toString()
           if(nodeid.includes('ADA')){
@@ -116,7 +117,9 @@ style: [ // the stylesheet for the graph
             return 'ellipse'
           }
         }
+        */
       }
+
   },
 
   {
@@ -125,10 +128,9 @@ style: [ // the stylesheet for the graph
       'width': 1,
       'line-color': '#ccc',
       'target-arrow-color': '#ccc',
-      'curve-style': 'straight',
-      'target-arrow-shape': 'triangle',
+      'curve-style': 'haystack',
       'z-index': 1,
-      'opacity': .4,
+      'opacity': 1
     }
   },
   {
@@ -140,6 +142,7 @@ style: [ // the stylesheet for the graph
     'opacity': 1,
     'width': 4,
     'curve-style': 'straight',
+    'target-arrow-shape': 'triangle',
   }
 },
 {
@@ -160,9 +163,9 @@ style: [ // the stylesheet for the graph
   minZoom: 1e-50,
   maxZoom: 1e50,
   zoomingEnabled: true,
-  userZoomingEnabled: true,
+  userZoomingEnabled: false,
   panningEnabled: true,
-  userPanningEnabled: true,
+  userPanningEnabled: false,
   boxSelectionEnabled: false,
   selectionType: 'single',
   touchTapThreshold: 8,
@@ -201,7 +204,7 @@ let options = {
   clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
   sort: undefined, // a sorting function to order the nodes; e.g. function(a, b){ return a.data('weight') - b.data('weight') }
   animate: true, // whether to transition the node positions
-  animationDuration: 600, // duration of animation in ms if enabled
+  animationDuration: 1200, // duration of animation in ms if enabled
   animationEasing: undefined, // easing of animation if enabled
   animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
   ready: undefined, // callback on layoutready
@@ -215,7 +218,7 @@ let smallCircleOptions =
   radius: 400,
   sort: function(a, b){ return a.data('order') - b.data('order') },
   animate: true, // whether to transition the node positions
-  animationDuration: 600, // duration of animation in ms if enabled
+  animationDuration: 1200, // duration of animation in ms if enabled
 }
 
 document.getElementById("generateButton").addEventListener("click", loadAPI);

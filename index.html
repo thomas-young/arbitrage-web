@@ -136,17 +136,20 @@
       <h2>Negative Cycle Arbitrage Graph</h2>
       <p>This graph shows each cryptocurrency at a number of exchanges as vertices.  The graph's edges can be thought of as the
         exchange rates between these currencies.  We use a modified Bellman Ford algorithm to look for negative cycles in the graph,
-        and these negative cycles are seen as the vertices and edges in the center of the graph.
+        and these negative cycles are seen as the vertices and edges in the center of the graph.  The green arrows between vertices
+        in the center of the graph show a path of currency trading which, if followed, will allow one to end up with more of the same
+        currency they started out with.  This process, known as arbitrage, makes use of the slight fluctuations in cryptocurrency
+        exchange rates across different exchanges in order to gain currency solely through trading at the right times.
       </p>
-
       <button id='generateButton' type="button">Generate New Negative Cycle</button>
-
-    </div>
-    <div id='graphDiv'>
-    </div>
-    <div id='historicalInfo'>
+      </div>
+      <div id='graphDiv'>
+      </div>
+      <div id='historicalInfo'>
       <h2>Cryptocurrency Prices Over Time</h2>
-      <p>The graph at left shows the average prices of cryptocurrencies in the recent past.
+      <p>The graph at left shows the average prices of cryptocurrencies in the recent past.  The fluctuations in these cryptocurrency prices
+        are part of what allow our project to work.  Although a currency might be generally moving up or down, these movements take slighty different
+        amounts of time on different exchanges.  This effect is amplified when dealing with many currencies across many exchanges.
           Click the name of a currency at the top legend in order to toggle the display of that currency.</p>
     </div>
     <div id='tickerplots'>

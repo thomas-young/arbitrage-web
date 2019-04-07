@@ -11,8 +11,8 @@
         font-family: 'Cabin', sans-serif;
       }
     #graphDiv {
-       width: 60%;
-       height: 100%;
+       width: 50%;
+       height: 83.3%;
        /* position: absolute; */
        top: 5%;
        left: 40%;
@@ -44,7 +44,7 @@
     }
     #historicalInfo {
       text-align: center;
-      padding-top: 200px;
+      padding-top: 170px;
       padding-right: 40px;
       height: 20%;
       width: 40%;
@@ -124,24 +124,33 @@
   }
   /* Button styles end */
 
+  span{
+    font-size:2em;
+  }
+  span b{
+    font-size:60%;
+    vertical-align: middle;
+  }
+
+
   </style>
   </head>
   <body>
     <ul>
-      <li><a class="active" href="#home">Visualization</a></li>
+      <li><a class="active" href="#home"><span>Visualization</span></a></li>
       <!-- <li><a href="about.html">About</a></li> -->
-      <li class="banner">ChangeChain: Cryptocurrency Arbitrage For Charity</li>
+      <li class="banner">  <span>ChangeChain: <b>Turning Sense into Change</b></span></li>
     </ul>
     <div id='header'>
-      <h2>Negative Cycle Arbitrage Graph</h2>
+      <h2>Positive Cycle Arbitrage Graph</h2>
       <p>This graph shows each cryptocurrency at a number of exchanges as vertices.  The graph's edges can be thought of as the
-        exchange rates between these currencies.  We use a modified Bellman Ford algorithm to look for negative cycles in the graph,
+        exchange rates between these currencies. We modified the Bellman Ford algorithm to look for negative cycles in the graph,
         and these negative cycles are seen as the vertices and edges in the center of the graph.  The green arrows between vertices
         in the center of the graph show a path of currency trading which, if followed, will allow one to end up with more of the same
-        currency they started out with.  This process, known as arbitrage, makes use of the slight fluctuations in cryptocurrency
+        currency they started out with. This process, known as arbitrage, makes use of slight fluctuations in cryptocurrency
         exchange rates across different exchanges in order to gain currency solely through trading at the right times.
       </p>
-      <button id='generateButton' type="button">Generate New Negative Cycle</button>
+      <button id='generateButton' type="button">Generate New Positive Cycle</button>
       </div>
       <div id='graphDiv'>
       </div>
